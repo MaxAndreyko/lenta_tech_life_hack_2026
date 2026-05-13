@@ -1,0 +1,49 @@
+@startuml
+!include <C4/C4_Component>
+
+title C4 Component Diagram — Пайплайн обработки видео
+
+Container_Boundary(processor, "Пайплайн обработки видео") {
+
+    Component(frameExtractor, "Модуль извлечения кадров", "OpenCV", "Извлекает последовательность кадров из видео")
+
+    Component(detector, "Модуль детекции ценников", "YOLO11", "Находит bounding boxes ценников")
+
+    Component(tracker, "Модуль трекинга", "ByteTrack", "Назначает стабильные track_id")
+
+    Component(trackBuffer, "Буфер треков", "Python", "Хранит crops и метаданные по каждому track_id")
+
+    Component(bestFrame, "Модуль выбора лучших кадров", "Python", "Выбирает TOP-K лучших кадров для OCR")
+
+    Component(qrDecoder, "Модуль декодирования QR", "OpenCV / pyzbar", "Извлекает структурированные данные из QR")
+
+    Component(ocrEngine, "OCR-модуль", "PaddleOCR", "Распознаёт текстовые поля ценника")
+
+    Component(aggregator, "Модуль temporal aggregation", "Python", "Агрегирует предсказания по времени")
+
+    Component(deduplicator, "Модуль дедупликации", "Python", "Объединяет дубликаты ценников")
+
+    Component(csvBuilder, "Модуль генерации CSV", "Pandas", "Формирует итоговый CSV")
+}
+
+Rel(frameExtractor, detector, "Кадры")
+
+Rel(detector, tracker, "Bounding boxes")
+
+Rel(tracker, trackBuffer, "track_id + crops")
+
+Rel(trackBuffer, bestFrame, "Наблюдения треков")
+
+Rel(bestFrame, qrDecoder, "Лучшие crops")
+
+Rel(bestFrame, ocrEngine, "Лучшие crops")
+
+Rel(qrDecoder, aggregator, "QR-поля")
+
+Rel(ocrEngine, aggregator, "OCR-предсказания")
+
+Rel(aggregator, deduplicator, "Агрегированные треки")
+
+Rel(deduplicator, csvBuilder, "Финальные данные")
+
+@enduml

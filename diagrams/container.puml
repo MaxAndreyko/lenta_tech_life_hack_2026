@@ -1,0 +1,39 @@
+@startuml
+!include <C4/C4_Container>
+
+title C4 Container Diagram — MVP системы распознавания ценников
+
+Person(user, "Пользователь")
+
+System_Boundary(system, "Система распознавания ценников") {
+
+    Container(ui, "Gradio UI", "Python / Gradio", "Загрузка видео, просмотр результатов и скачивание CSV")
+
+    Container(api, "Backend API", "FastAPI", "Оркестрация пайплайна обработки видео")
+
+    Container(processor, "Пайплайн обработки видео", "Python", "Detection, tracking, OCR и агрегация")
+
+    ContainerDb(storage, "Локальное хранилище", "Filesystem", "Видео, crops, временные данные и CSV")
+
+    Container(detector, "Модель детекции", "YOLO11", "Детекция ценников")
+
+    Container(tracker, "Модуль трекинга", "ByteTrack", "Отслеживание ценников между кадрами")
+
+    Container(ocr, "OCR и QR-модуль", "PaddleOCR + OpenCV/pyzbar", "Извлечение текста и QR-данных")
+}
+
+Rel(user, ui, "Использует")
+
+Rel(ui, api, "Загружает видео")
+Rel(api, processor, "Запускает обработку")
+
+Rel(processor, detector, "Детекция ценников")
+Rel(processor, tracker, "Трекинг ценников")
+Rel(processor, ocr, "OCR / QR extraction")
+
+Rel(processor, storage, "Чтение / запись файлов")
+
+Rel(api, storage, "Получение CSV")
+Rel(ui, storage, "Скачивание CSV")
+
+@enduml
