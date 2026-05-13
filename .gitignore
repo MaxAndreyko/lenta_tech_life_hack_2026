@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDEs and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local data and generated pipeline artifacts
+backend/data/videos/*
+backend/data/frames/*
+backend/data/crops/*
+backend/data/outputs/*
+backend/data/temp/*
+
+# Keep data directory structure
+!backend/data/videos/.gitkeep
+!backend/data/frames/.gitkeep
+!backend/data/crops/.gitkeep
+!backend/data/outputs/.gitkeep
+!backend/data/temp/.gitkeep
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+*.safetensors
+checkpoints/
+weights/
+models_cache/
+
+# PaddleOCR / HF / torch local caches if created inside repo
+.paddleocr/
+.cache/
+hf_cache/
+torch_cache/
+
+# Generated reports
+*.csv
+*.xlsx
+*.parquet
+
+# Do not ignore documentation examples explicitly tracked later
+!backend/README.md
