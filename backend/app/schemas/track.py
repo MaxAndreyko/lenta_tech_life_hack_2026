@@ -25,6 +25,7 @@ class Track:
     """Tracked object state with stable identity and history."""
 
     track_id: int
+    frame_id: int
     bbox_xyxy: BBoxXYXY
     confidence: float
     age: int = 1
@@ -36,6 +37,8 @@ class Track:
 
     def set_state(self, frame_id: int, bbox_xyxy: BBoxXYXY, confidence: float, history_size: int) -> None:
         """Set a frame state and keep the history buffer bounded."""
+
+        self.frame_id = frame_id
         self.bbox_xyxy = bbox_xyxy
         self.confidence = confidence
         self.history.append(FrameTrackState(frame_id=frame_id, bbox_xyxy=bbox_xyxy, confidence=confidence))
@@ -48,3 +51,19 @@ class Track:
         data = asdict(self)
         data["history"] = [state.to_dict() for state in self.history]
         return data
+
+    def snapshot(self) -> Track:
+        """Return an immutable-by-convention copy of the current track state."""
+
+        return Track(
+            track_id=self.track_id,
+            frame_id=self.frame_id,
+            bbox_xyxy=self.bbox_xyxy,
+            confidence=self.confidence,
+            age=self.age,
+            hits=self.hits,
+            missed_frames=self.missed_frames,
+            is_confirmed=self.is_confirmed,
+            history=list(self.history),
+            metadata=dict(self.metadata),
+        )
