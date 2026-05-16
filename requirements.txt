@@ -12,3 +12,6 @@ torch>=2.3.0
 paddleocr>=2.7.0
 pyzbar>=0.1.9
 pytest>=8.2.0
+
+# ui
+gradio==6.14.0
