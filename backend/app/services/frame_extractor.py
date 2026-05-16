@@ -82,6 +82,26 @@ class FrameExtractorService:
         logger.info("Finished frame extraction: video=%s frames=%d", video_path, len(metadata))
         return metadata
 
+    def get_frame(self, video_path: Path | str, frame_id: int) -> np.ndarray:
+        """Return a single raw frame by its frame index."""
+
+        video_path = Path(video_path)
+        if not video_path.exists():
+            raise FileNotFoundError(f"Video file does not exist: {video_path}")
+
+        capture = cv2.VideoCapture(str(video_path))
+        if not capture.isOpened():
+            raise ValueError(f"Could not open video file: {video_path}")
+
+        try:
+            capture.set(cv2.CAP_PROP_POS_FRAMES, frame_id)
+            success, frame = capture.read()
+            if not success or frame is None:
+                raise ValueError(f"Could not read frame {frame_id} from {video_path}")
+            return frame
+        finally:
+            capture.release()
+
     def iter_frames(self, video_path: Path | str) -> Iterator[tuple[int, float, np.ndarray]]:
         """Yield selected raw frames as (frame_id, timestamp_ms, frame)."""
 
