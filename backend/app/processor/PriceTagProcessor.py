@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 class PriceTagProcessor:
-    def __init__(self, detector_model: str):
+    def __init__(self, detector_model: str, batch_size: int = 8):
         self.model = YOLO(detector_model)
+        self.batch_size = batch_size
 
     def process_video(
         self,
@@ -23,32 +24,48 @@ class PriceTagProcessor:
         config = FrameExtractionConfig(every_n_frames=frame_interval)
         extractor = FrameExtractorService(config)
 
-        frame_metas: list[tuple[int, float]] = []
-        frames = []
+        detections: list[Detection] = []
+        batch_metas: list[tuple[int, float]] = []
+        batch_frames = []
 
         for frame_id, timestamp_ms, frame in extractor.iter_frames(video_path):
-            frame_metas.append((frame_id, timestamp_ms))
-            frames.append(frame)
+            batch_metas.append((frame_id, timestamp_ms))
+            batch_frames.append(frame)
+
+            if len(batch_frames) == self.batch_size:
+                detections.extend(self._predict_batch(batch_frames, batch_metas, confidence_threshold))
+                batch_frames.clear()
+                batch_metas.clear()
+
+        if batch_frames:
+            detections.extend(self._predict_batch(batch_frames, batch_metas, confidence_threshold))
+
+        return detections
+
+    def _predict_batch(
+        self,
+        frames: list,
+        metas: list[tuple[int, float]],
+        confidence_threshold: float,
+    ) -> list[Detection]:
+        results = self.model.predict(
+            source=frames,
+            conf=confidence_threshold,
+            imgsz=640,
+            batch=len(frames),
+            verbose=False,
+        )
 
         detections: list[Detection] = []
-
-        if frames:
-            results = self.model.predict(
-                source=frames,
-                conf=confidence_threshold,
-                imgsz=640,
-                verbose=False,
-            )
-
-            for (frame_id, _), result in zip(frame_metas, results):
-                for box_idx, box in enumerate(result.boxes):
-                    x1, y1, x2, y2 = map(float, box.xyxy[0].tolist())
-                    detections.append(Detection(
-                        detection_id=f"{frame_id}_{box_idx}",
-                        frame_id=frame_id,
-                        bbox_xyxy=(x1, y1, x2, y2),
-                        confidence=round(float(box.conf[0]), 4),
-                        class_name=result.names[int(box.cls[0])],
-                    ))
+        for (frame_id, _), result in zip(metas, results):
+            for box_idx, box in enumerate(result.boxes):
+                x1, y1, x2, y2 = map(float, box.xyxy[0].tolist())
+                detections.append(Detection(
+                    detection_id=f"{frame_id}_{box_idx}",
+                    frame_id=frame_id,
+                    bbox_xyxy=(x1, y1, x2, y2),
+                    confidence=round(float(box.conf[0]), 4),
+                    class_name=result.names[int(box.cls[0])],
+                ))
 
         return detections
