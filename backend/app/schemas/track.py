@@ -25,6 +25,7 @@ class Track:
     """Tracked object state with stable identity and history."""
 
     track_id: int
+    frame_id: int
     bbox_xyxy: BBoxXYXY
     confidence: float
     age: int = 1
@@ -36,6 +37,8 @@ class Track:
 
     def set_state(self, frame_id: int, bbox_xyxy: BBoxXYXY, confidence: float, history_size: int) -> None:
         """Set a frame state and keep the history buffer bounded."""
+
+        self.frame_id = frame_id
         self.bbox_xyxy = bbox_xyxy
         self.confidence = confidence
         self.history.append(FrameTrackState(frame_id=frame_id, bbox_xyxy=bbox_xyxy, confidence=confidence))

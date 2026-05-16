@@ -211,6 +211,7 @@ class ByteTrackerAdapter(AbstractTracker):
             if track_id not in self._tracks_by_id:
                 self._tracks_by_id[track_id] = Track(
                     track_id=track_id,
+                    frame_id=frame_id,
                     bbox_xyxy=bbox_xyxy,
                     confidence=confidence,
                     age=1,
