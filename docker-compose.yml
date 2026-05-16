@@ -1,0 +1,10 @@
+services:
+  price-tag-reader:
+    build: .
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
