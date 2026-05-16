@@ -236,7 +236,7 @@ class ByteTrackerAdapter(AbstractTracker):
                 track.metadata["source_tracker"] = "roboflow/trackers"
                 track.metadata["class_name"] = class_name
                 track.metadata["source_detection_id"] = source_detection.detection_id
-                track.append_state(
+                track.set_state(
                     frame_id=frame_id,
                     bbox_xyxy=bbox_xyxy,
                     confidence=confidence,
