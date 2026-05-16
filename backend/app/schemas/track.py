@@ -34,8 +34,8 @@ class Track:
     history: list[FrameTrackState] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
 
-    def append_state(self, frame_id: int, bbox_xyxy: BBoxXYXY, confidence: float, history_size: int) -> None:
-        """Append a frame state and keep the history buffer bounded."""
+    def set_state(self, frame_id: int, bbox_xyxy: BBoxXYXY, confidence: float, history_size: int) -> None:
+        """Set a frame state and keep the history buffer bounded."""
         self.bbox_xyxy = bbox_xyxy
         self.confidence = confidence
         self.history.append(FrameTrackState(frame_id=frame_id, bbox_xyxy=bbox_xyxy, confidence=confidence))
