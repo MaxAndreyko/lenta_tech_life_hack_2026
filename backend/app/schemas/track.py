@@ -51,19 +51,3 @@ class Track:
         data = asdict(self)
         data["history"] = [state.to_dict() for state in self.history]
         return data
-
-    def snapshot(self) -> Track:
-        """Return an immutable-by-convention copy of the current track state."""
-
-        return Track(
-            track_id=self.track_id,
-            frame_id=self.frame_id,
-            bbox_xyxy=self.bbox_xyxy,
-            confidence=self.confidence,
-            age=self.age,
-            hits=self.hits,
-            missed_frames=self.missed_frames,
-            is_confirmed=self.is_confirmed,
-            history=list(self.history),
-            metadata=dict(self.metadata),
-        )
