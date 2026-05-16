@@ -49,6 +49,11 @@ backend/data/frames/*
 backend/data/crops/*
 backend/data/outputs/*
 backend/data/temp/*
+backend/data/annotations/*
+backend/data/labels/*
+data/videos/*
+data/annotations/*
+data/labels/*
 
 # Keep data directory structure
 !backend/data/videos/.gitkeep
