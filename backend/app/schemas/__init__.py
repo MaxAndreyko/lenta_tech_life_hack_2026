@@ -2,6 +2,7 @@
 
 from backend.app.schemas.detection import BBoxXYXY, Detection
 from backend.app.schemas.frame import FrameMetadata
+from backend.app.schemas.qr import QRDetection
 from backend.app.schemas.track import FrameTrackState, Track
 
 __all__ = [
@@ -9,5 +10,6 @@ __all__ = [
     "Detection",
     "FrameMetadata",
     "FrameTrackState",
-    "Track"
+    "QRDetection",
+    "Track",
 ]

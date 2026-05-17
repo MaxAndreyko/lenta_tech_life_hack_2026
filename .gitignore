@@ -51,6 +51,7 @@ backend/data/outputs/*
 backend/data/temp/*
 backend/data/annotations/*
 backend/data/labels/*
+backend/data/qr_models/
 data/videos/*
 data/annotations/*
 data/labels/*
